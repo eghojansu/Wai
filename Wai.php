@@ -14,7 +14,7 @@ class Wai
     //! Package info
     const
         PACKAGE = 'eghojansu/wai',
-        VERSION = '0.1.1';
+        VERSION = '0.1.2';
 
     //! filename
     const
@@ -73,7 +73,7 @@ class Wai
      * Status
      * @var bool
      */
-    protected static $status;
+    protected static $status = self::STATUS_SUCCESS;
 
     /**
      * getInstalledVersionFile
@@ -126,7 +126,6 @@ class Wai
     public static function setup(array $config)
     {
         self::$config = $config + self::$config;
-        self::createWorkingDir();
     }
 
     /**
@@ -167,15 +166,17 @@ class Wai
 
     /**
      * Handle instalation
-     * @param  array $additionalProcedures
+     * @param  array $beforeDB
+     * @param  array $afterDB
      * @return bool
      */
-    public static function handleInstallation(array $additionalProcedures = [])
+    public static function handleInstallation(array $beforeDB = [], array $afterDB = [])
     {
-        $installed = self::doInstallDatabaseProcedure();
-        $success   = self::doInstallAdditionalProcedure($additionalProcedures);
+        self::doInstallAdditionalProcedure($beforeDB);
+        $installed  = self::doInstallDatabaseProcedure();
+        self::doInstallAdditionalProcedure($afterDB);
 
-        if ($success) {
+        if (self::success()) {
             self::addInstalledSchema($installed);
             self::addInstalledVersion();
         }
@@ -240,6 +241,8 @@ class Wai
      */
     public static function getWorkingDir()
     {
+        self::createWorkingDir();
+
         return self::fixSlashes(self::$config['workingDir']);
     }
 
@@ -391,6 +394,7 @@ class Wai
         $workingDir = self::fixSlashes(self::$config['workingDir']);
         if (false === file_exists($workingDir)) {
             mkdir($workingDir, true);
+            chmod($workingDir, 0777);
         }
         self::$config['workingDir'] = $workingDir;
     }
@@ -400,6 +404,10 @@ class Wai
      */
     protected static function doInstallDatabaseProcedure()
     {
+        if (self::failed()) {
+            return [];
+        }
+
         $pdo = self::getPDO();
         $schemas = self::getSchemaToInstall();
 
@@ -440,7 +448,6 @@ class Wai
             self::$status = self::STATUS_FAILED;
         } else {
             self::$message = 'Database installation complete!';
-            self::$status = self::STATUS_SUCCESS;
         }
 
         return $schemas;
