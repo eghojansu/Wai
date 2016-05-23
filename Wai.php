@@ -11,6 +11,11 @@
  */
 class Wai
 {
+    //! Package info
+    const
+        PACKAGE = 'eghojansu/Wai',
+        VERSION = '0.1.0';
+
     //! filename
     const
         INSTALLED_FILENAME = 'wai_installed',
