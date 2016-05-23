@@ -106,7 +106,7 @@ SQL
         $result = Wai::result();
 
         $this->assertContains('Database installation complete!', $result);
-        $this->assertContains('You can remove line in '.$file.' start from line '.$startLine.' until line '.$endLine, $result);
+        $this->assertContains('You can remove line in '.$file.' start from #'.$startLine.' until #'.$endLine, $result);
         $this->assertTrue(file_exists(Wai::getInstalledVersionFile()));
         $this->assertTrue(file_exists(Wai::getInstalledSchemaFile()));
     }

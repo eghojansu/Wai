@@ -14,7 +14,7 @@ class Wai
     //! Package info
     const
         PACKAGE = 'eghojansu/wai',
-        VERSION = '0.1.3';
+        VERSION = '0.1.4';
 
     //! filename
     const
@@ -196,10 +196,8 @@ class Wai
         if (self::success()) {
             $result .= (self::$info['file']? self::VERSION_DELIMITER
                 . 'You can remove line in '.self::$info['file']
-                . (self::$info['lineStart']?' start from line '.self::$info['lineStart']:'')
-                . (self::$info['lineEnd']?' until line '.self::$info['lineEnd']:'')
-                . self::VERSION_DELIMITER
-                . ' (you can remove between that line)'
+                . (self::$info['lineStart']?' start from #'.self::$info['lineStart']:'')
+                . (self::$info['lineEnd']?' until #'.self::$info['lineEnd']:'')
                 : ''
               );
         }
