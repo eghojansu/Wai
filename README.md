@@ -56,7 +56,7 @@ if (Wai::isNotInstalled()) {
             // other statements to do
         },
     ];
-    Wai::handleInstallation();
+    Wai::handleInstallation($callbacks);
 }
 
 // informative finish flag
