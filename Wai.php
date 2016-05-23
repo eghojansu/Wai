@@ -13,8 +13,8 @@ class Wai
 {
     //! Package info
     const
-        PACKAGE = 'eghojansu/Wai',
-        VERSION = '0.1.0';
+        PACKAGE = 'eghojansu/wai',
+        VERSION = '0.1.1';
 
     //! filename
     const
