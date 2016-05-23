@@ -14,7 +14,7 @@ class Wai
     //! Package info
     const
         PACKAGE = 'eghojansu/wai',
-        VERSION = '0.1.1';
+        VERSION = '0.1.2';
 
     //! filename
     const
