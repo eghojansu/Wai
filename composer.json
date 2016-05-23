@@ -1,0 +1,26 @@
+{
+	"name": "eghojansu/Wai",
+	"description": "Web Application Installer",
+	"keywords": ["wai", "web application", "installer"],
+	"authors": [
+        {
+            "name": "Eko Kurniawan",
+            "email": "ekokurniawanbs@gmail.com",
+            "role": "Developer"
+        }
+	],
+	"require": {
+		"php": ">=5.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "~4.8"
+	},
+	"autoload": {
+		"files": ["Wai.php"]
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Wai\\Test\\": "tests/"
+		}
+	}
+}
