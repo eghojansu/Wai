@@ -18,7 +18,7 @@ Wai::start(__FILE__, 6);
 $config = [
     // current version
     'version'      => '0.1.0',
-    // used for saving installed version and schema
+    // used for saving installed version and schema, ensure this directory is writable
     'workingDir'   => 'tmp/',
     // schema directory that contains every schema that need to be installed
     // filename should be prefixed by ordered number
@@ -46,9 +46,9 @@ if (Wai::isNotInstalled()) {
 
 	// not installed, install it
 	// you can pass array of callback that will be execute
-	// after database procedure has been done
+	// before and after database procedure called
     $dir = __DIR__;
-    $callbacks = [
+    $callbacksBefore = [
         function() use ($dir) {
             chmod($dir.'/tmp', 0777);
         },
@@ -56,7 +56,12 @@ if (Wai::isNotInstalled()) {
             // other statements to do
         },
     ];
-    Wai::handleInstallation($callbacks);
+    $callbacksAfter = [
+        function() {
+            // other statements to do
+        },
+    ];
+    Wai::handleInstallation($callbacksBefore, $callbacksAfter);
 }
 
 // informative finish flag

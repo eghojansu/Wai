@@ -28,5 +28,3 @@ if (file_exists($tmpdir)) {
 
     rmtree($tmpdir);
 }
-
-mkdir($tmpdir);

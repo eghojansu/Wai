@@ -16,8 +16,8 @@ class WaiTest extends \PHPUnit_Framework_TestCase
     {
         $instalationConfig = [
             'version'      => $version,
-            'workingDir'   => realpath(__DIR__.'/../tmp'),
-            'schemaDir'    => realpath(__DIR__.'/../data/schema'),
+            'workingDir'   => realpath(__DIR__.'/..').'/tmp',
+            'schemaDir'    => realpath(__DIR__.'/..').'/data/schema',
             'database'     => [
                 'dsn'      => 'mysql:host=127.0.0.1',
                 'username' => 'root',
@@ -97,7 +97,10 @@ SQL
             $callbacks = [function() {
                 file_put_contents(Wai::getWorkingDir().'test_callback', 'blank');
             }];
-            Wai::handleInstallation($callbacks);
+            $callbacksAfter = [function() {
+                file_put_contents(Wai::getWorkingDir().'test_callback_after', 'blank');
+            }];
+            Wai::handleInstallation($callbacks, $callbacksAfter);
         }
         Wai::finish($file, $endLine = __LINE__);
         $result = Wai::result();
