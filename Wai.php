@@ -14,7 +14,7 @@ class Wai
     //! Package info
     const
         PACKAGE = 'eghojansu/wai',
-        VERSION = '0.1.2';
+        VERSION = '0.1.3';
 
     //! filename
     const
@@ -73,7 +73,7 @@ class Wai
      * Status
      * @var bool
      */
-    protected static $status = self::STATUS_SUCCESS;
+    protected static $status;
 
     /**
      * getInstalledVersionFile
@@ -143,7 +143,7 @@ class Wai
      */
     public static function isNotInstalled()
     {
-        return !self::isInstalled();
+        return self::getCurrentVersion() !== self::getInstalledVersion();
     }
 
     /**
@@ -172,6 +172,7 @@ class Wai
      */
     public static function handleInstallation(array $beforeDB = [], array $afterDB = [])
     {
+        self::$status = self::STATUS_SUCCESS;
         self::doInstallAdditionalProcedure($beforeDB);
         $installed  = self::doInstallDatabaseProcedure();
         self::doInstallAdditionalProcedure($afterDB);
