@@ -98,25 +98,47 @@ class Wai
     }
 
     /**
-     * Start flag
+     * Record mark to remove file within line between removed
      * @param  string $file
-     * @param  string|integer $lineNumber
+     * @param  string|integer $lineStart
+     * @param  string|integer $lineEnd
      */
-    public static function start($file, $lineNumber)
+    public static function mark($file, $lineStart, $lineEnd)
     {
-        self::$info['file'] = $file;
-        self::$info['lineStart'] = $lineNumber;
+        self::$info['file']      = $file;
+        self::$info['lineStart'] = $lineStart;
+        self::$info['lineEnd']   = $lineEnd;
     }
 
     /**
-     * End flag
-     * @param  string $file
-     * @param  string|integer $lineNumber
+     * Clean file
      */
-    public static function finish($file, $lineNumber)
+    public static function cleanThisFile()
     {
-        self::$info['file'] = $file;
-        self::$info['lineEnd'] = $lineNumber;
+        if (is_writable(self::$info['file']) &&
+            self::$info['lineStart'] &&
+            self::$info['lineEnd']
+        ) {
+            $content = '';
+
+            $handle = fopen(self::$info['file'], 'rb');
+            if ($handle) {
+                $counter = 0;
+                while (($buffer = fgets($handle)) !== false) {
+                    $counter++;
+                    if ($counter >= self::$info['lineStart'] &&
+                        $counter <= self::$info['lineEnd']
+                    ) {
+                        continue;
+                    }
+                    $content .= $buffer;
+                }
+                fclose($handle);
+
+                file_put_contents(self::$info['file'], $content);
+                unset($counter, $content);
+            }
+        }
     }
 
     /**
@@ -125,7 +147,7 @@ class Wai
      */
     public static function setup(array $config)
     {
-        self::$config = $config + self::$config;
+        self::$config = array_replace_recursive(self::$config, $config);
     }
 
     /**
@@ -143,16 +165,7 @@ class Wai
      */
     public static function isNotInstalled()
     {
-        return self::getCurrentVersion() !== self::getInstalledVersion();
-    }
-
-    /**
-     * Check failed status
-     * @return bool
-     */
-    public static function failed()
-    {
-        return !self::success();
+        return !self::isInstalled();
     }
 
     /**
@@ -162,6 +175,15 @@ class Wai
     public static function success()
     {
         return self::$status === self::STATUS_SUCCESS;
+    }
+
+    /**
+     * Check failed status
+     * @return bool
+     */
+    public static function failed()
+    {
+        return !self::success();
     }
 
     /**
@@ -198,6 +220,7 @@ class Wai
                 . 'You can remove line in '.self::$info['file']
                 . (self::$info['lineStart']?' start from #'.self::$info['lineStart']:'')
                 . (self::$info['lineEnd']?' until #'.self::$info['lineEnd']:'')
+                . ' (or it will automatically removed if you perform cleanThisFile method)'
                 : ''
               );
         }
@@ -392,8 +415,7 @@ class Wai
     {
         $workingDir = self::fixSlashes(self::$config['workingDir']);
         if (false === file_exists($workingDir)) {
-            mkdir($workingDir, true);
-            chmod($workingDir, 0777);
+            mkdir($workingDir, 0777, true);
         }
         self::$config['workingDir'] = $workingDir;
     }

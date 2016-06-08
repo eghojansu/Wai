@@ -39,6 +39,15 @@ class WaiTest extends \PHPUnit_Framework_TestCase
         return $file;
     }
 
+    protected function createTestFile()
+    {
+        $testfile = __DIR__.'/../tmp/test.php';
+        @mkdir(__DIR__.'/../tmp', 0777, true);
+        copy(__DIR__.'/../data/FileAwal.php', $testfile);
+
+        return [$testfile, 3, 7];
+    }
+
     protected function createThirdSchema()
     {
         $file = $this->thirdSchemaFile();
@@ -68,18 +77,22 @@ SQL
 
     public function testFirstInstall()
     {
-        Wai::start(__FILE__, __LINE__);
+        $mark = $this->createTestFile();
+        Wai::mark($mark[0], $mark[1], $mark[2]);
         $instalationConfig = $this->getInstalationConfig('0.1.0');
         Wai::setup($instalationConfig);
         if (Wai::isNotInstalled()) {
             Wai::handleInstallation();
         }
-        Wai::finish(__FILE__, __LINE__);
         $result = Wai::result();
+        Wai::cleanThisFile();
 
         $this->assertContains('Database installation complete!', $result);
         $this->assertTrue(file_exists(Wai::getInstalledVersionFile()));
         $this->assertTrue(file_exists(Wai::getInstalledSchemaFile()));
+        $content1 = trim(file_get_contents($mark[0]));
+        $content2 = trim(file_get_contents(__DIR__.'/../data/FileAkhir.php'));
+        $this->assertEquals($content1, $content2);
     }
 
     /**
@@ -88,7 +101,7 @@ SQL
     public function testSecondInstall()
     {
         $file = __FILE__;
-        Wai::start($file, $startLine = __LINE__);
+        Wai::mark($file, $startLine = 90, $endLine = 104);
         $instalationConfig = $this->getInstalationConfig('0.2.0');
         // create new schema
         $this->createThirdSchema();
@@ -102,7 +115,6 @@ SQL
             }];
             Wai::handleInstallation($callbacks, $callbacksAfter);
         }
-        Wai::finish($file, $endLine = __LINE__);
         $result = Wai::result();
 
         $this->assertContains('Database installation complete!', $result);
