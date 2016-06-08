@@ -10,9 +10,8 @@ In your entry file (eg. index.php) add statements like below to get this work.
 <?php
 
 // index.php
-
-// informative start flag
-Wai::start(__FILE__, 6);
+// mark file and line to clean
+Wai::mark(__FILE__, $lineStart = 6, $lineEnd = 62);
 
 // configuration
 $config = [
@@ -63,9 +62,6 @@ if (Wai::isNotInstalled()) {
     ];
     Wai::handleInstallation($callbacksBefore, $callbacksAfter);
 }
-
-// informative finish flag
-Wai::finish(__FILE__, 60);
 
 // catch result
 // $result = Wai::result();
